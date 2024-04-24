@@ -1,5 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 public class ArrayAssignmentNode extends MethodCallNode {
@@ -7,8 +9,8 @@ public class ArrayAssignmentNode extends MethodCallNode {
         super(arrayTypeName, "arrayset()");
     }
 
-    public ArrayAssignmentNode(String arrayTypeName, int sourceLineNumber) {
-        super(arrayTypeName, "arrayset()", sourceLineNumber);
+    public ArrayAssignmentNode(String arrayTypeName, int sourceLineNumber, ASTNode astNode) {
+        super(arrayTypeName, "arrayset()", sourceLineNumber, astNode);
     }
 
     @Override

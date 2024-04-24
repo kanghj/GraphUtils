@@ -6,6 +6,8 @@ import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 import java.util.Optional;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 public class MethodCallNode extends BaseNode implements ActionNode {
     private final String declaringTypeName;
     private final String methodSignature;
@@ -15,8 +17,8 @@ public class MethodCallNode extends BaseNode implements ActionNode {
         this.methodSignature = methodSignature;
     }
 
-    public MethodCallNode(String declaringTypeName, String methodSignature, int sourceLineNumber) {
-        super(sourceLineNumber);
+    public MethodCallNode(String declaringTypeName, String methodSignature, int sourceLineNumber, ASTNode astNode) {
+        super(sourceLineNumber, astNode);
         this.declaringTypeName = declaringTypeName;
         this.methodSignature = methodSignature;
     }

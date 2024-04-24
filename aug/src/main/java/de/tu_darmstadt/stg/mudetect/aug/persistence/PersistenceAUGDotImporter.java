@@ -9,6 +9,8 @@ import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.DefinitionEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ParameterEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.QualifierEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ReceiverEdge;
+
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.jgrapht.ext.DOTImporter;
 
 import java.util.Map;
@@ -24,57 +26,59 @@ public class PersistenceAUGDotImporter extends DOTImporter<Node, Edge> {
 
     private static Node createNode(String label, Map<String, String> attributes) {
         Class nodeType = AUG_ELEMENT_LABEL_TO_TYPE.get(label);
+        
+        ASTNode astNode = null;
 
         if (nodeType == ArrayAccessNode.class) {
-            return new ArrayAccessNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes));
+            return new ArrayAccessNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == ArrayAssignmentNode.class) {
-            return new ArrayAssignmentNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes));
+            return new ArrayAssignmentNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == ArrayCreationNode.class) {
-            return new ArrayCreationNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes));
+            return new ArrayCreationNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == AssignmentNode.class) {
-            return new AssignmentNode(getSourceLineNumber(attributes));
+            return new AssignmentNode(getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == BreakNode.class) {
-            return new BreakNode(getSourceLineNumber(attributes));
+            return new BreakNode(getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == CastNode.class) {
-            return new CastNode(attributes.get(TARGET_TYPE), getSourceLineNumber(attributes));
+            return new CastNode(attributes.get(TARGET_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == CatchNode.class) {
-            return new CatchNode(attributes.get(CATCH_TYPE), getSourceLineNumber(attributes));
+            return new CatchNode(attributes.get(CATCH_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == ConstructorCallNode.class) {
-            return new ConstructorCallNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes));
+            return new ConstructorCallNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == ContinueNode.class) {
-            return new ContinueNode(getSourceLineNumber(attributes));
+            return new ContinueNode(getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == InfixOperatorNode.class) {
-            return new InfixOperatorNode(attributes.get(OPERATOR), getSourceLineNumber(attributes));
+            return new InfixOperatorNode(attributes.get(OPERATOR), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == MethodCallNode.class) {
-            return new MethodCallNode(attributes.get(DECLARING_TYPE), attributes.get(METHOD_SIGNATURE), getSourceLineNumber(attributes));
+            return new MethodCallNode(attributes.get(DECLARING_TYPE), attributes.get(METHOD_SIGNATURE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == NullCheckNode.class) {
-            return new NullCheckNode(getSourceLineNumber(attributes));
+            return new NullCheckNode(getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == ReturnNode.class) {
-            return new ReturnNode(getSourceLineNumber(attributes));
+            return new ReturnNode(getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == SuperConstructorCallNode.class) {
-            return new SuperConstructorCallNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes));
+            return new SuperConstructorCallNode(attributes.get(DECLARING_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == ThrowNode.class) {
-            return new ThrowNode(getSourceLineNumber(attributes));
+            return new ThrowNode(getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == TypeCheckNode.class) {
-            return new TypeCheckNode(attributes.get(TARGET_TYPE), getSourceLineNumber(attributes));
+            return new TypeCheckNode(attributes.get(TARGET_TYPE), getSourceLineNumber(attributes), astNode);
         }
         if (nodeType == UnaryOperatorNode.class) {
-            return new UnaryOperatorNode(attributes.get(OPERATOR), getSourceLineNumber(attributes));
+            return new UnaryOperatorNode(attributes.get(OPERATOR), getSourceLineNumber(attributes), astNode);
         }
 
         if (nodeType == AnonymousClassMethodNode.class) {
@@ -87,13 +91,13 @@ public class PersistenceAUGDotImporter extends DOTImporter<Node, Edge> {
             return new ConstantNode(attributes.get(DATA_TYPE), attributes.get(DATA_NAME), attributes.get(DATA_VALUE));
         }
         if (nodeType == ExceptionNode.class) {
-            return new ExceptionNode(attributes.get(DATA_TYPE), attributes.get(DATA_NAME));
+            return new ExceptionNode(attributes.get(DATA_TYPE), attributes.get(DATA_NAME), astNode);
         }
         if (nodeType == LiteralNode.class) {
-            return new LiteralNode(attributes.get(DATA_TYPE), attributes.get(DATA_VALUE));
+            return new LiteralNode(attributes.get(DATA_TYPE), attributes.get(DATA_VALUE), astNode);
         }
         if (nodeType == VariableNode.class) {
-            return new VariableNode(attributes.get(DATA_TYPE), attributes.get(DATA_NAME));
+            return new VariableNode(attributes.get(DATA_TYPE), attributes.get(DATA_NAME), astNode);
         }
 
         throw new IllegalArgumentException("unsupported node type: " + label);

@@ -1,5 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 public class InfixOperatorNode extends OperatorNode {
@@ -7,8 +9,8 @@ public class InfixOperatorNode extends OperatorNode {
         super(operator);
     }
 
-    public InfixOperatorNode(String operator, int sourceLineNumber) {
-        super(operator, sourceLineNumber);
+    public InfixOperatorNode(String operator, int sourceLineNumber, ASTNode astNode) {
+        super(operator, sourceLineNumber, astNode);
     }
 
     @Override

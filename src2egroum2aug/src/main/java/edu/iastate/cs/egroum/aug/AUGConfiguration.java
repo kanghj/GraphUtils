@@ -67,7 +67,7 @@ public class AUGConfiguration {
      * 1 - use names
      * 2 - use values
      */
-    public int encodeConstants = 1;
+    public int encodeConstants = 2;
     
     /**
      * 
@@ -78,6 +78,12 @@ public class AUGConfiguration {
      * Threshold for the minimum number of statements in a method to build AUG
      */
     public int minStatements = 0;
+    
+    
+    /**
+     * HJ:  threshold for max number of stmts. If too big, we run out of memory during processing afterwards.
+     */
+    public int maxStatements = 200;
     
     /**
      * 

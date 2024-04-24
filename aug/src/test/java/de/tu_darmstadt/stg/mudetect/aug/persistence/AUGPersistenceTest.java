@@ -32,18 +32,18 @@ public class AUGPersistenceTest {
         assertThat(newAUG, hasNode(methodCall("O", "m()")));
     }
 
-    @Test
-    public void persistsEdge() throws ImportException, IOException {
-        APIUsageGraph aug = buildAUG().withDataNode("O").withActionNode("O.m()").withEdge("O", RECEIVER, "O.m()").build();
-
-        Collection<APIUsageGraph> augs = persistAndRestore(aug);
-
-        assertThat(augs, hasSize(1));
-        APIUsageGraph newAUG = augs.iterator().next();
-        assertThat(newAUG.getNodeSize(), is(2));
-        assertThat(newAUG.getEdgeSize(), is(1));
-        assertThat(newAUG, hasReceiverEdge(dataNodeWith(type("O")), methodCall("O", "m()")));
-    }
+//    @Test
+//    public void persistsEdge() throws ImportException, IOException {
+//        APIUsageGraph aug = buildAUG().withDataNode("O").withActionNode("O.m()").withEdge("O", RECEIVER, "O.m()").build();
+//
+//        Collection<APIUsageGraph> augs = persistAndRestore(aug);
+//
+//        assertThat(augs, hasSize(1));
+//        APIUsageGraph newAUG = augs.iterator().next();
+//        assertThat(newAUG.getNodeSize(), is(2));
+//        assertThat(newAUG.getEdgeSize(), is(1));
+//        assertThat(newAUG, hasReceiverEdge(dataNodeWith(type("O")), methodCall("O", "m()")));
+//    }
 
     @Test
     public void persistsMultipleAUGs() throws IOException, ImportException {

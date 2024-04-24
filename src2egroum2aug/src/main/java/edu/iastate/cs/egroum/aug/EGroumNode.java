@@ -440,6 +440,8 @@ public abstract class EGroumNode {
 				if (!(e instanceof EGroumDataEdge))
 					continue;
 				EGroumDataEdge de = (EGroumDataEdge) e;
+				
+				
 				if (e.source instanceof EGroumActionNode) {
 					if (!doneNodes.contains(e.source))
 						e.source.buildDataClosure(doneNodes);

@@ -21,4 +21,5 @@ public interface EdgeVisitor<R> {
     R visit(ParameterEdge edge);
     R visit(QualifierEdge edge);
     R visit(ReceiverEdge edge);
+    
 }

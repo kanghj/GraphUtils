@@ -92,26 +92,40 @@ public class JavaASTUtil {
 	public static String getLabel(InfixExpression.Operator key) {
 		return JavaASTUtil.infixExpressionLables.get(key.toString());
 	}
+	
+	public static Map<String, ASTNode> astNodeCache = new HashMap<>(); 
 
 	@SuppressWarnings("rawtypes")
 	public static ASTNode parseSource(String source, String path, String name, String[] classpaths) {
-		Map options = JavaCore.getOptions();
-		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
-		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
-		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-		String srcDir = getSrcDir(source, path, name);
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
-    	parser.setCompilerOptions(options);
-		parser.setEnvironment(
-				classpaths == null ? new String[]{} : classpaths, 
-				new String[]{srcDir}, 
-				new String[]{"UTF-8"}, 
-				true);
-		parser.setResolveBindings(true);
-		parser.setBindingsRecovery(true);
-		parser.setSource(source.toCharArray());
-    	parser.setUnitName(name);
-		return parser.createAST(null);
+		String identifier = path + "__" + name + "___" + classpaths;
+		if (astNodeCache.containsKey(identifier)) {
+			return astNodeCache.get(identifier);
+		} else {
+		
+			astNodeCache.clear(); // only one item in astNodeCache at any time
+			
+			Map options = JavaCore.getOptions();
+			options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_8);
+			options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_8);
+			options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+//			String srcDir = getSrcDir(source, path, name);
+			String srcDir = path.substring(0, path.indexOf("/"));
+			ASTParser parser = ASTParser.newParser(AST.JLS8);
+	    	parser.setCompilerOptions(options);
+			parser.setEnvironment(
+					classpaths == null ? new String[]{} : classpaths, 
+					new String[]{srcDir}, 
+					new String[]{"UTF-8"}, 
+					true);
+			parser.setResolveBindings(true);
+			parser.setBindingsRecovery(true);
+			parser.setSource(source.toCharArray());
+	    	parser.setUnitName(name);
+			ASTNode result = parser.createAST(null);
+			astNodeCache.put(identifier, result);
+			 
+			return result;
+		}
 	}
 
 	@SuppressWarnings("rawtypes")

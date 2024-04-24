@@ -36,6 +36,18 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        
+        <!-- adding the ast node into the graph's node -->
+          <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.annotation</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+         <dependency>
+            <groupId>org.eclipse.tycho</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.11.1.v20150902-1521</version>
+        </dependency>
 
         <!-- ### Testing ################################################## -->
         <dependency>

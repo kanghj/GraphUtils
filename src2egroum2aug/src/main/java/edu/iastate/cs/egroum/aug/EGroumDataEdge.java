@@ -3,7 +3,8 @@ package edu.iastate.cs.egroum.aug;
 import java.util.HashSet;
 
 public class EGroumDataEdge extends EGroumEdge {
-	public enum Type {RECEIVER, PARAMETER, DEFINITION, REFERENCE, CONDITION, DEPENDENCE, QUALIFIER, THROW, FINALLY, ORDER, CONTAINS}
+	public enum Type {
+		RECEIVER, PARAMETER, DEFINITION, REFERENCE, CONDITION, DEPENDENCE, QUALIFIER, THROW, FINALLY, ORDER, CONTAINS}
 	
 	protected Type type;
 

@@ -347,7 +347,7 @@ public class Miner {
 			return projectNames.size();
 		if (config.occurenceLevel == Configuration.Level.CROSS_METHOD)
 			return fragmentsOfGraph.size();
-		int freq = 0;
+		int freq = 0; // counts the number of fragments that do not share even one action node
 		for (APIUsageGraph g : fragmentsOfGraph.keySet()) {
 			ArrayList<Fragment> fs = fragmentsOfGraph.get(g);
 			int i = 0;

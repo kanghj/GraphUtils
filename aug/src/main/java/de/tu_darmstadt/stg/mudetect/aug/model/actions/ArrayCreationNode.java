@@ -1,5 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 public class ArrayCreationNode extends ConstructorCallNode {
@@ -7,8 +9,8 @@ public class ArrayCreationNode extends ConstructorCallNode {
         super(baseType);
     }
 
-    public ArrayCreationNode(String baseType, int sourceLineNumber) {
-        super(baseType, sourceLineNumber);
+    public ArrayCreationNode(String baseType, int sourceLineNumber, ASTNode astNode) {
+        super(baseType, sourceLineNumber, astNode);
     }
 
     @Override

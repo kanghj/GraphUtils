@@ -1,5 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 public class NullCheckNode extends InfixOperatorNode {
@@ -7,8 +9,8 @@ public class NullCheckNode extends InfixOperatorNode {
         super("<nullcheck>");
     }
 
-    public NullCheckNode(int sourceLineNumber) {
-        super("<nullcheck>", sourceLineNumber);
+    public NullCheckNode(int sourceLineNumber, ASTNode astNode) {
+        super("<nullcheck>", sourceLineNumber, astNode);
     }
 
     @Override

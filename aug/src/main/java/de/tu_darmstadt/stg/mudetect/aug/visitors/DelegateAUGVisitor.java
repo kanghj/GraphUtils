@@ -74,7 +74,7 @@ public class DelegateAUGVisitor<R> implements AUGElementVisitor<R> {
     public R visit(ReceiverEdge edge) {
         return delegate.visit(edge);
     }
-
+    
     @Override
     public R visit(ArrayAccessNode node) {
         return delegate.visit(node);

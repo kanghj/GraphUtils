@@ -7,6 +7,7 @@ import de.tu_darmstadt.stg.mubench.cli.DetectorOutput;
 import de.tu_darmstadt.stg.mudetect.*;
 import de.tu_darmstadt.stg.mudetect.aug.model.APIUsageExample;
 import de.tu_darmstadt.stg.mudetect.aug.model.patterns.APIUsagePattern;
+import de.tu_darmstadt.stg.mudetect.aug.persistence.PersistenceAUGDotExporter;
 import edu.iastate.cs.mudetect.mining.AUGMiner;
 import edu.iastate.cs.mudetect.mining.DefaultAUGMiner;
 import edu.iastate.cs.mudetect.mining.MinPatternActionsModel;
@@ -34,6 +35,11 @@ class CrossProjectStrategy implements DetectionStrategy {
         TargetProject targetProject = TargetProject.find(getIndexFilePath(), args.getTargetSrcPaths());
         Collection<APIUsageExample> targets = loadDetectionTargets(args, targetProject);
         output.withRunInfo("numberOfTargets", targets.size());
+//        System.out.println("numberOfTargets = " + targets.size());
+        if (targets.isEmpty()) {
+        	System.out.println("args are = " + Arrays.toString(args.getTargetSrcPaths()));
+        	throw new RuntimeException("no targets found. ");
+        }
 
         Set<APIUsagePattern> patterns = new HashSet<>();
         Set<String> minedForAPIs = new HashSet<>();
@@ -54,18 +60,41 @@ class CrossProjectStrategy implements DetectionStrategy {
             output.withRunInfo(logPrefix + "-numberOfTrainingExamples", trainingExamples.size());
             output.withRunInfo(logPrefix + "-numberOfUsagesInTrainingExamples", getTypeUsageCounts(trainingExamples));
 
-            Model model = createMiner().mine(trainingExamples);
+            Model model;
+            try {
+            	model = createMiner().mine(trainingExamples);
+            } catch (java.lang.OutOfMemoryError oom) {
+            	System.out.println("Out of memory error!");
+            	oom.printStackTrace();
+            	
+            	// create miner + mine has side effects. Thus, have to mine the training examples again, but this time don't use all of them. 
+            	trainingExamples = loadTrainingExamples(api, logPrefix, examplePredicate, args, output);
+            	trainingExamples = pickNRandomElements(new ArrayList<>(trainingExamples), trainingExamples.size() / 2, new Random("OOMHack".hashCode()));
+            	System.out.println("Sampling half only: training examples size=" + trainingExamples.size());
+            	model = createMiner().mine(trainingExamples);
+            }
+           
             output.withRunInfo(logPrefix + "-numberOfPatterns", model.getPatterns().size());
+            
+            int i = 0;
+            for (APIUsagePattern pattern : model.getPatterns()) {
+            	output.withRunInfo(logPrefix + "-pattern-" + i++, 
+            			new PersistenceAUGDotExporter().toDotGraph(pattern)
+            	);
+            }
+            
             output.withRunInfo(logPrefix + "-maxPatternSupport", model.getMaxPatternSupport());
 
             patterns.addAll(model.getPatterns());
         }
+        System.out.println("Done with mining patterns. Moving on to violation detection. numberOfTargets = " + targets.size());
 
         Model model = () -> patterns;
         List<Violation> violations = createDetector(model).findViolations(targets);
         output.withRunInfo("numberOfViolations", violations.size());
         output.withRunInfo("numberOfExploredAlternatives", AlternativeMappingsOverlapsFinder.numberOfExploredAlternatives);
 
+        System.out.println("Done. Moving on to convert violations to findings.");
         return output.withFindings(violations, ViolationUtils::toFinding);
     }
 
@@ -81,7 +110,9 @@ class CrossProjectStrategy implements DetectionStrategy {
         for (ExampleProject exampleProject : exampleProjects) {
             String projectName = exampleProject.getProjectPath();
             List<APIUsageExample> projectExamples = new ArrayList<>();
-            for (String srcDir : exampleProject.getSrcDirs()) {
+            List<String> srcDirs = new ArrayList<>(exampleProject.getSrcDirs());
+            Collections.shuffle(srcDirs);
+            for (String srcDir : srcDirs) {
                 Path projectSrcPath = Paths.get(exampleProject.getProjectPath(), srcDir);
                 System.out.println(String.format("[MuDetectXProject] Scanning path %s", projectSrcPath));
                 PrintStream originalSysOut = System.out;
@@ -96,6 +127,12 @@ class CrossProjectStrategy implements DetectionStrategy {
                     e.printStackTrace(System.err);
                 } finally {
                     System.setOut(originalSysOut);
+                }
+                System.out.println(String.format("[MuDetectXProject] Adding examples from %", projectSrcPath));
+                int maxNumberOfExamplesPerProject = 1000 / exampleProjects.size();
+                if (projectExamples.size() > maxNumberOfExamplesPerProject) {
+                	System.out.println(String.format("[MuDetectXProject] break early because size exceeded. Current size=%d", projectExamples.size()));
+                	break;
                 }
             }
             System.out.println(String.format("[MuDetectXProject] Examples from Project = %d", projectExamples.size()));
@@ -193,6 +230,7 @@ class CrossProjectStrategy implements DetectionStrategy {
         AUGBuilder builder = new AUGBuilder(new DefaultAUGConfiguration() {{
             usageExamplePredicate = MisuseInstancePredicate.examplesOf(targetProject.getMisuses());
         }});
+        
         return builder.build(args.getTargetSrcPaths(), args.getDependencyClassPath());
     }
 

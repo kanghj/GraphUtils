@@ -12,6 +12,8 @@ import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 import java.util.*;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 public class TestAUGBuilder {
     private static int randomAUGCount = 0;
     private static Map<String, String> infixOperatorsToLabels = new HashMap<>();
@@ -139,7 +141,7 @@ public class TestAUGBuilder {
         } else if (nodeName.equals("return")) {
             return withNode(id, new ReturnNode());
         } else if (nodeName.equals("<catch>")) {
-            return withNode(id, new CatchNode("Throwable"));
+            return withNode(id, new CatchNode("Throwable", -1, null));
         } else {
             if (nodeName.contains(".")) {
                 String[] nameParts = nodeName.split("\\.");
@@ -156,26 +158,26 @@ public class TestAUGBuilder {
         }
     }
 
-    public TestAUGBuilder withDataNodes(String... nodeNames) {
-        for (String nodeName : nodeNames) {
-            withDataNode(nodeName);
-        }
-        return this;
-    }
+//    public TestAUGBuilder withDataNodes(String... nodeNames) {
+//        for (String nodeName : nodeNames) {
+//            withDataNode(nodeName);
+//        }
+//        return this;
+//    }
 
-    public TestAUGBuilder withDataNode(String nodeName) {
+    public TestAUGBuilder withDataNode(String nodeName,  ASTNode astNode) {
         if (nodeMap.containsKey(nodeName)) {
             throw new IllegalArgumentException("A node with id '" + nodeName + "' already exists, please specify an explicit node id.");
         }
-        return withDataNode(nodeName, nodeName);
+        return withDataNode(nodeName, nodeName, astNode);
     }
 
-    public TestAUGBuilder withDataNode(String id, String nodeName) {
+    public TestAUGBuilder withDataNode(String id, String nodeName, ASTNode astNode) {
         if (nodeName.endsWith("Exception") || nodeName.endsWith("Error") || nodeName.equals("Throwable")) {
-            return withNode(id, new ExceptionNode(nodeName, null));
+            return withNode(id, new ExceptionNode(nodeName, null, astNode));
         } else {
             // TODO check whether we need the second parameter here
-            return withNode(id, new VariableNode(nodeName, null));
+            return withNode(id, new VariableNode(nodeName, null, astNode));
         }
     }
 

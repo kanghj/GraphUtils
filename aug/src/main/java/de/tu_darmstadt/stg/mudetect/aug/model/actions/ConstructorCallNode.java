@@ -1,5 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 public class ConstructorCallNode extends MethodCallNode {
@@ -7,8 +9,8 @@ public class ConstructorCallNode extends MethodCallNode {
         super(typeName, "<init>");
     }
 
-    public ConstructorCallNode(String typeName, int sourceLineNumber) {
-        super(typeName, "<init>", sourceLineNumber);
+    public ConstructorCallNode(String typeName, int sourceLineNumber, ASTNode astNode) {
+        super(typeName, "<init>", sourceLineNumber, astNode);
     }
 
     @Override

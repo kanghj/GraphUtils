@@ -6,6 +6,8 @@ import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 import java.util.Optional;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 public class CastNode extends BaseNode implements ActionNode {
     private final String targetType;
 
@@ -13,8 +15,8 @@ public class CastNode extends BaseNode implements ActionNode {
         this.targetType = targetType;
     }
 
-    public CastNode(String targetType, int sourceLineNumber) {
-        super(sourceLineNumber);
+    public CastNode(String targetType, int sourceLineNumber, ASTNode astNode) {
+        super(sourceLineNumber, astNode);
         this.targetType = targetType;
     }
 

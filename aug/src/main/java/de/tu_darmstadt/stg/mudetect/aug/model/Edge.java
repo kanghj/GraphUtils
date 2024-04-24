@@ -16,7 +16,9 @@ public interface Edge extends Cloneable, Serializable {
         CONTAINS("contains"),
         FINALLY("finally"),
         QUALIFIER("qual"),
-        EXCEPTION_HANDLING("hdl");
+        EXCEPTION_HANDLING("hdl"),
+    	
+    	IMPLEMENTS("impl"); // just a dummy value. This doesnt actually matter
 
         private final String label;
 

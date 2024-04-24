@@ -3,6 +3,7 @@ package de.tu_darmstadt.stg.mubench;
 import de.tu_darmstadt.stg.mubench.cli.DetectorFinding;
 import de.tu_darmstadt.stg.mudetect.aug.model.APIUsageExample;
 import de.tu_darmstadt.stg.mudetect.aug.model.Location;
+import de.tu_darmstadt.stg.mudetect.aug.model.dot.DisplayAUGDotExporter;
 import de.tu_darmstadt.stg.mudetect.dot.ViolationDotExporter;
 import de.tu_darmstadt.stg.mudetect.model.Violation;
 
@@ -18,6 +19,8 @@ public class ViolationUtils {
         Location location = violation.getLocation();
         DetectorFinding finding = new DetectorFinding(location.getFilePath(), location.getMethodSignature());
         finding.put("pattern_violation", violationDotExporter.toDotGraph(violation));
+        System.out.println("is pattern size 0? " + new DisplayAUGDotExporter().toDotGraph(violation.getOverlap().getPattern()).length());
+        finding.put("pattern", new DisplayAUGDotExporter().toDotGraph(violation.getOverlap().getPattern()));
         finding.put("target_environment_mapping", violationDotExporter.toTargetEnvironmentDotGraph(violation));
         finding.put("confidence", violation.getConfidence());
         finding.put("pattern_support", violation.getOverlap().getPattern().getSupport());

@@ -1,5 +1,7 @@
 package de.tu_darmstadt.stg.mudetect.aug.model.actions;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 import de.tu_darmstadt.stg.mudetect.aug.visitors.NodeVisitor;
 
 public class SuperMethodCallNode extends MethodCallNode {
@@ -7,8 +9,8 @@ public class SuperMethodCallNode extends MethodCallNode {
         super(declaringTypeName, methodSignature);
     }
 
-    public SuperMethodCallNode(String declaringTypeName, String methodSignature, int sourceLineNumber) {
-        super(declaringTypeName, methodSignature, sourceLineNumber);
+    public SuperMethodCallNode(String declaringTypeName, String methodSignature, int sourceLineNumber, ASTNode astNode) {
+        super(declaringTypeName, methodSignature, sourceLineNumber, astNode);
     }
 
     @Override

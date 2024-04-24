@@ -4,17 +4,22 @@ import de.tu_darmstadt.stg.mudetect.aug.visitors.BaseAUGLabelProvider;
 
 import java.util.Optional;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+
 public abstract class BaseNode implements Node {
     private static int nextNodeId = 0;
 
     private final int id;
     private final int sourceLineNumber;
     private APIUsageGraph aug;
+    
+    public ASTNode astNode;
 
-    protected BaseNode() { this(-1); }
+    protected BaseNode() { this(-1, null); }
 
-    protected BaseNode(int sourceLineNumber) {
+    protected BaseNode(int sourceLineNumber, ASTNode astNode) {
         this.sourceLineNumber = sourceLineNumber;
+        this.astNode = astNode;
         this.id = nextNodeId++;
     }
 

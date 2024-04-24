@@ -7,6 +7,7 @@ import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.DefinitionEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ParameterEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.QualifierEdge;
 import de.tu_darmstadt.stg.mudetect.aug.model.dataflow.ReceiverEdge;
+import smu.hongjin.LiteralsUtils;
 
 public class BaseAUGLabelProvider implements AUGLabelProvider {
     @Override
@@ -170,7 +171,7 @@ public class BaseAUGLabelProvider implements AUGLabelProvider {
 
     @Override
     public String visit(ConstantNode node) {
-        return node.getType();
+        return node.getType() + ":" + node.getName();
     }
 
     @Override
@@ -180,7 +181,19 @@ public class BaseAUGLabelProvider implements AUGLabelProvider {
 
     @Override
     public String visit(LiteralNode node) {
-        return node.getType();
+    	String literalString = node.getType() + ":" + node.getValue(); 
+    			
+    	// if not String, long, int, just return both type and value
+    	if (!(node.getType().equals("String") || node.getType().equals("long") || node.getType().equals("int"))) {
+    		return literalString;
+    	}
+    	// Otherwise, return both type and value only if frequent enough
+    	if (LiteralsUtils.getFreq(node.getValue()) >= 1) {
+    		return literalString;
+    	} 
+    	
+    	// or just return its type.
+		return node.getType();
     }
 
     @Override

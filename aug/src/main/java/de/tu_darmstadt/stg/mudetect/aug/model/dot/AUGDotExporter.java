@@ -7,6 +7,8 @@ import de.tu_darmstadt.stg.mudetect.aug.model.Edge;
 import de.tu_darmstadt.stg.mudetect.aug.model.Node;
 import de.tu_darmstadt.stg.mudetect.aug.visitors.AUGLabelProvider;
 import de.tu_darmstadt.stg.mudetect.aug.visitors.BaseAUGLabelProvider;
+import smu.hongjin.EnhancedAUGAsGraph;
+
 import org.jgrapht.ext.ComponentAttributeProvider;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
@@ -19,7 +21,7 @@ import java.util.function.Function;
 
 public class AUGDotExporter {
     private static final String WINDOWS_EXEC_DOT = "D:/Program Files (x86)/Graphviz2.36/bin/dot.exe";	// Windows
-    private static final String LINUX_EXEC_DOT = "dot";	// Linux
+    private static final String LINUX_EXEC_DOT = "/opt/homebrew/bin/dot";	// Linux
     private static String EXEC_DOT = null;
 
     static {
@@ -65,6 +67,12 @@ public class AUGDotExporter {
         return writer.toString();
     }
 
+    public String toDotGraph(EnhancedAUGAsGraph aug) {
+        StringWriter writer = new StringWriter();
+        toDotGraph(aug, writer);
+        return writer.toString();
+    }
+    
     private void toDotGraph(APIUsageGraph aug, Writer writer) {
         nodeIdProvider.clear();
         exporter.export(new PrintWriter(writer) {
@@ -85,8 +93,41 @@ public class AUGDotExporter {
             }
         }, aug);
     }
+    
+    private void toDotGraph(EnhancedAUGAsGraph eaug, Writer writer) {
+        nodeIdProvider.clear();
+        exporter.export(new PrintWriter(writer) {
+            @Override
+            public void write(String s, int off, int len) {
+                if (s.equals("digraph G {")) {
+                    String methodName = "AUG";
+                    StringBuilder data = new StringBuilder("digraph \"").append(methodName).append("\" {").append(NEW_LINE);
+                    if (graphAttributeProvider != null) {
+//                        for (Map.Entry<String, String> attribute : graphAttributeProvider.getAUGAttributes(eaug.aug).entrySet()) {
+//                            data.append(attribute.getKey()).append("=").append(attribute.getValue()).append(";").append(NEW_LINE);
+//                        }
+                    }
+                    super.write(data.toString(), 0, data.length());
+                } else {
+                    super.write(s, off, len);
+                }
+            }
+        }, eaug);
+    }
 
     public void toDotFile(APIUsageGraph aug, File file) throws IOException {
+        if (!file.getPath().endsWith(".dot")) {
+            file = new File(file.getPath() + ".dot");
+        }
+        file = file.getAbsoluteFile();
+        ensureDirectory(file.getParentFile());
+        try (BufferedWriter fout = new BufferedWriter(new FileWriter(file))) {
+            fout.append(toDotGraph(aug));
+            fout.flush();
+        }
+    }
+    
+    public void toDotFile(EnhancedAUGAsGraph aug, File file) throws IOException {
         if (!file.getPath().endsWith(".dot")) {
             file = new File(file.getPath() + ".dot");
         }
@@ -108,6 +149,18 @@ public class AUGDotExporter {
         Process p = rt.exec(new String[]{EXEC_DOT, "-T"+ "png", nameWithoutExtension +".dot", "-o", nameWithoutExtension +"."+ "png"});
         p.waitFor();
     }
+    
+    public void toPNGFile(EnhancedAUGAsGraph aug, File file) throws IOException, InterruptedException {
+        file = file.getAbsoluteFile();
+        File directory = file.getParentFile();
+        ensureDirectory(directory);
+        String nameWithoutExtension = new File(directory, Files.getNameWithoutExtension(file.getPath())).getPath();
+        toDotFile(aug, new File(nameWithoutExtension + ".dot"));
+        Runtime rt = Runtime.getRuntime();
+        Process p = rt.exec(new String[]{EXEC_DOT, "-T"+ "png", nameWithoutExtension +".dot", "-o", nameWithoutExtension +"."+ "png"});
+        p.waitFor();
+    }
+
 
     private void ensureDirectory(File path) {
         if (!path.exists()) path.mkdirs();

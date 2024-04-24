@@ -25,7 +25,7 @@ public class EGroumDataNode extends EGroumNode {
 	protected boolean isField = false, isDeclaration = false;
 	protected String dataName;
 	protected String dataValue;
-	protected int encodeLevel = 0;
+	protected int encodeLevel = 2;
 	
 	public EGroumDataNode(ASTNode astNode, int nodeType, String key, String dataType, String dataName) {
 		super(astNode, nodeType, key);
